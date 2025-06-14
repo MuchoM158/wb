@@ -1,7 +1,7 @@
 const firebaseConfig = {
   apiKey: "AIzaSyCa5i154cR_Ii88g_1oedV3_njNMDd9umI",
   authDomain: "paginablackjack.firebaseapp.com",
-  databaseURL: "https://tu-proyecto.firebaseio.com",
+  databaseURL: "https://paginablackjack-default-rtdb.firebaseio.com/",
   projectId: "paginablackjack",
   storageBucket: "paginablackjack.firebasestorage.app",
   messagingSenderId: "992879750702",
