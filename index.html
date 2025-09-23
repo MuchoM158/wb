@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Flor amarilla</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: fondoCalido 20s infinite alternate;
+    }
+
+    @keyframes fondoCalido {
+      0%   { background-color: #fffbe6; }   /* crema */
+      25%  { background-color: #ffe4b5; }   /* moccasin */
+      50%  { background-color: #ffd700; }   /* dorado */
+      75%  { background-color: #ffcc80; }   /* naranja suave */
+      100% { background-color: #ffb6b6; }   /* coral claro */
+    }
+
+    .canvas {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: 200px;
+    }
+
+    .flor {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      background-image: url('flor amarilla.png'); /* ← Reemplaza con tu imagen */
+      background-size: cover;
+      animation: aparecer 1s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes aparecer {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 🎵 Música de fondo -->
+  <audio autoplay loop>
+    <source src="Floricienta Flores Amarillas.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="canvas" id="canvas"></div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const tamaño = 30;
+    const espacioEntreLetras = 180;
+
+    const letras = {
+      R: [
+        [0,0],[1,0],[2,0],
+        [0,1],[2,1],
+        [0,2],[1,2],[2,2],
+        [0,3],[1,3],
+        [0,4],[2,4]
+      ],
+      U: [
+        [0,0],[2,0],
+        [0,1],[2,1],
+        [0,2],[2,2],
+        [0,3],[2,3],
+        [0,4],[1,4],[2,4]
+      ],
+      B: [
+        [0,0],[1,0],[2,0],
+        [0,1],[2,1],
+        [0,2],[1,2],[2,2],[3,2],
+        [0,3],[3,3],
+        [0,4],[1,4],[2,4],[3,4]
+      ],
+      Y: [
+        [0,0],[2,0],
+        [0.5,1],[1.5,1],
+        [1,2],
+        [1,3],
+        [1,4]
+      ]
+    };
+
+    const nombre = ['R','U','B','Y'];
+    const anchoNombre = nombre.length * espacioEntreLetras;
+    canvas.style.width = `${anchoNombre}px`;
+
+    nombre.forEach((letra, index) => {
+      const coords = letras[letra];
+      coords.forEach((coord, i) => {
+        const flor = document.createElement('div');
+        flor.className = 'flor';
+        flor.style.left = `${coord[0] * tamaño + index * espacioEntreLetras}px`;
+        flor.style.top = `${coord[1] * tamaño}px`;
+        flor.style.animationDelay = `${i * 0.1 + index * 0.5}s`;
+        canvas.appendChild(flor);
+      });
+    });
+  </script>
+</body>
+</html>
