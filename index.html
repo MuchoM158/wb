@@ -1,110 +1,222 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Flor amarilla</title>
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      animation: fondoCalido 20s infinite alternate;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No sabo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    @keyframes fondoCalido {
-      0%   { background-color: #fffbe6; }   /* crema */
-      25%  { background-color: #ffe4b5; }   /* moccasin */
-      50%  { background-color: #ffd700; }   /* dorado */
-      75%  { background-color: #ffcc80; }   /* naranja suave */
-      100% { background-color: #ffb6b6; }   /* coral claro */
-    }
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
 
-    .canvas {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-45%, -55%);
-      height: 200px;
-    }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+        }
 
-    .flor {
-      position: absolute;
-      width: 32px;
-      height: 32px;
-      background-image: url('flor amarilla.png'); /* ← Reemplaza con tu imagen */
-      background-size: cover;
-      animation: aparecer 1s ease forwards;
-      opacity: 0;
-    }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
 
-    @keyframes aparecer {
-      0% { transform: scale(0); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-  </style>
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+            position: relative;
+            height: 80px;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #yesBtn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        #yesBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        #noBtn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        #noBtn.moving {
+            position: absolute;
+        }
+
+        .success {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .secret-message {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .emoji {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        #secretBtn {
+            background: none;
+            border: none;
+            font-size: 60px;
+            cursor: pointer;
+            margin-top: 20px;
+            padding: 10px;
+            transition: transform 0.3s;
+        }
+
+        #secretBtn:hover {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .secret-text {
+            font-size: 18px;
+            color: #555;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
-  <!-- 🎵 Música de fondo -->
-  <audio autoplay loop>
-    <source src="Floricienta Flores Amarillas.mp3" type="audio/mpeg">
-  </audio>
+    <div class="container">
+        <div id="question">
+            <div class="emoji">💝</div>
+            <h1>¿Quieres ser mi enamorada?</h1>
+            <div class="buttons">
+                <button id="yesBtn">Sí</button>
+                <button id="noBtn">No</button>
+            </div>
+        </div>
+        <div id="success" class="success">
+            <div class="emoji">🎉</div>
+            <h1>¡Sabía que dirías que sí mi bonita!</h1>
+            <p style="font-size: 20px; color: #666; margin-top: 20px;">¡Luego te dare tu premio! 💕</p>
+            <button id="secretBtn">💌</button>
+        </div>
+        <div id="secretMessage" class="secret-message">
+            <div class="emoji">💖</div>
+            <h1>Mensaje Especial</h1>
+            <div class="secret-text">
+                El premio es algo que te pone cariñosa y hace que me digas de todo.💕
+            </div>
+        </div>
+    </div>
 
-  <div class="canvas" id="canvas"></div>
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const question = document.getElementById('question');
+        const success = document.getElementById('success');
+        const secretBtn = document.getElementById('secretBtn');
+        const secretMessage = document.getElementById('secretMessage');
+        const container = document.querySelector('.container');
 
-  <script>
-    const canvas = document.getElementById('canvas');
-    const tamaño = 30;
-    const espacioEntreLetras = 180;
+        function moveNoButton() {
+            noBtn.classList.add('moving');
+            
+            const containerRect = container.getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+            const yesBtnRect = yesBtn.getBoundingClientRect();
+            
+            const maxX = containerRect.width - btnRect.width - 100;
+            const maxY = containerRect.height - btnRect.height - 100;
+            
+            let randomX, randomY;
+            let attempts = 0;
+            const maxAttempts = 50;
+            
+            do {
+                randomX = Math.random() * maxX;
+                randomY = Math.random() * maxY - 50;
+                
+                const noBtnLeft = randomX;
+                const noBtnRight = randomX + btnRect.width;
+                const noBtnTop = randomY;
+                const noBtnBottom = randomY + btnRect.height;
+                
+                const yesBtnLeft = yesBtnRect.left - containerRect.left;
+                const yesBtnRight = yesBtnRect.right - containerRect.left;
+                const yesBtnTop = yesBtnRect.top - containerRect.top;
+                const yesBtnBottom = yesBtnRect.bottom - containerRect.top;
+                
+                const margin = 20;
+                const noOverlap = (
+                    noBtnRight + margin < yesBtnLeft ||
+                    noBtnLeft - margin > yesBtnRight ||
+                    noBtnBottom + margin < yesBtnTop ||
+                    noBtnTop - margin > yesBtnBottom
+                );
+                
+                if (noOverlap) {
+                    break;
+                }
+                
+                attempts++;
+            } while (attempts < maxAttempts);
+            
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
 
-    const letras = {
-      R: [
-        [0,0],[1,0],[2,0],
-        [0,1],[2,1],
-        [0,2],[1,2],[2,2],
-        [0,3],[1,3],
-        [0,4],[2,4]
-      ],
-      U: [
-        [0,0],[2,0],
-        [0,1],[2,1],
-        [0,2],[2,2],
-        [0,3],[2,3],
-        [0,4],[1,4],[2,4]
-      ],
-      B: [
-        [0,0],[1,0],[2,0],
-        [0,1],[2,1],
-        [0,2],[1,2],[2,2],[3,2],
-        [0,3],[3,3],
-        [0,4],[1,4],[2,4],[3,4]
-      ],
-      Y: [
-        [0,0],[2,0],
-        [0.5,1],[1.5,1],
-        [1,2],
-        [1,3],
-        [1,4]
-      ]
-    };
+        noBtn.addEventListener('mouseover', moveNoButton);
+        noBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            moveNoButton();
+        });
 
-    const nombre = ['R','U','B','Y'];
-    const anchoNombre = nombre.length * espacioEntreLetras;
-    canvas.style.width = `${anchoNombre}px`;
+        yesBtn.addEventListener('click', () => {
+            question.style.display = 'none';
+            success.style.display = 'block';
+        });
 
-    nombre.forEach((letra, index) => {
-      const coords = letras[letra];
-      coords.forEach((coord, i) => {
-        const flor = document.createElement('div');
-        flor.className = 'flor';
-        flor.style.left = `${coord[0] * tamaño + index * espacioEntreLetras}px`;
-        flor.style.top = `${coord[1] * tamaño}px`;
-        flor.style.animationDelay = `${i * 0.1 + index * 0.5}s`;
-        canvas.appendChild(flor);
-      });
-    });
-  </script>
+        secretBtn.addEventListener('click', () => {
+            success.style.display = 'none';
+            secretMessage.style.display = 'block';
+        });
+    </script>
 </body>
 </html>
-
