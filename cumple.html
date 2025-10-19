@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feliz cumple</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Comic Sans MS', 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #ff69b4 0%, #ff1493 25%, #ff69b4 50%, #ffb6d9 75%, #ffc0cb 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      text-align: center;
+      max-width: 1000px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 3.5em;
+      color: white;
+      text-shadow: 3px 3px 0px #d946ef, 6px 6px 0px #ec4899;
+      margin-bottom: 10px;
+      animation: bounce 1s infinite;
+    }
+
+    .subtitle {
+      font-size: 1.2em;
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      margin-bottom: 40px;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+
+    .cake-canvas {
+      perspective: 1000px;
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .cake-image {
+      max-width: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+      animation: zoomIn 0.6s ease-out;
+    }
+
+    @keyframes zoomIn {
+      0% { 
+        transform: scale(0) rotateY(180deg);
+        opacity: 0;
+      }
+      100% { 
+        transform: scale(1) rotateY(0deg);
+        opacity: 1;
+      }
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    button {
+      padding: 20px;
+      font-size: 1.1em;
+      font-weight: bold;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+      color: white;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.2);
+      transition: 0.3s;
+    }
+
+    button:hover::before {
+      left: 100%;
+    }
+
+    .btn-ingredientes {
+      background: linear-gradient(135deg, #ff6b9d 0%, #ff1493 100%);
+    }
+
+    .btn-mezclar {
+      background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+    }
+
+    .btn-hornear {
+      background: linear-gradient(135deg, #ff4500 0%, #dc143c 100%);
+    }
+
+    .btn-decorar {
+      background: linear-gradient(135deg, #1e90ff 0%, #00bfff 100%);
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    button:active {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .status-message {
+      font-size: 1.3em;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .info-box {
+      background: rgba(255,255,255,0.2);
+      padding: 15px;
+      border-radius: 10px;
+      backdrop-filter: blur(10px);
+      color: white;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .final-message {
+      font-size: 2.5em;
+      color: white;
+      text-shadow: 3px 3px 0px #d946ef, 6px 6px 0px #ec4899;
+      opacity: 0;
+      transform: scale(0) rotateZ(-20deg);
+      transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      margin-top: 30px;
+    }
+
+    .final-message.show {
+      opacity: 1;
+      transform: scale(1) rotateZ(0deg);
+    }
+
+    .confetti {
+      position: fixed;
+      pointer-events: none;
+    }
+
+    @keyframes fall {
+      0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(600px) rotate(360deg);
+      }
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 10px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff69b4, #ffd700);
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5em;
+      }
+
+      .main-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .cake-canvas {
+        min-height: 300px;
+      }
+
+      .cake-image {
+        max-height: 300px;
+      }
+
+      .final-message {
+        font-size: 1.8em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <audio id="musica" src="1.mp3" loop></audio>
+
+  <div class="container">
+    <h1>🎂 ¡Un pastel para mi amor! 🎂</h1>
+    <p class="subtitle">😍 Te amo muchisimo mi bonita 😍</p>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="main-content">
+      <div class="cake-canvas" id="cakeCanvas">
+        <p style="color: white; font-size: 1.5em;">Presiona un botón para comenzar</p>
+      </div>
+
+      <div>
+        <div class="status-message" id="statusMessage">
+          👇 Comienza a hacer tu pastel
+        </div>
+        <div class="controls">
+          <button class="btn-ingredientes" id="btnIngredientes" onclick="agregarIngrediente()">
+            🧂 Ingredientes
+          </button>
+          <button class="btn-mezclar" id="btnMezclar" onclick="mezclar()" disabled>
+            🔄 Mezclar
+          </button>
+          <button class="btn-hornear" id="btnHornear" onclick="hornear()" disabled>
+            🔥 Hornear
+          </button>
+          <button class="btn-decorar" id="btnDecorar" onclick="decorar()" disabled>
+            ✨ Decorar
+          </button>
+        </div>
+        <div class="info-box" id="infoBox">
+          Presiona el botón para continuar
+        </div>
+      </div>
+    </div>
+
+    <div class="final-message" id="finalMessage">
+      🎉 ¡Feliz cumpleaños mi bonita! 🎉
+    </div>
+  </div>
+
+  <script>
+    let estado = {
+      ingredientes: false,
+      mezclado: false,
+      horneado: false,
+      decorado: false
+    };
+
+    // Imágenes organizadas por paso
+    const imagenes = {
+      ingredientes: ['pastel1.png', 'pastel2.png'],
+      mezclar: ['pastel3.png', 'pastel4.png', 'pastel5.png'],
+      hornear: ['pastel6.png'],
+      decorar: ['pastel7.png', 'pastel8.png', 'pastel9.png'],
+      final: 'pastel10.png'
+    };
+
+    function updateProgress() {
+      const steps = Object.values(estado).filter(v => v).length;
+      document.getElementById('progressFill').style.width = (steps * 25) + '%';
+    }
+
+    function updateStatusMessage(msg) {
+      const msgEl = document.getElementById('statusMessage');
+      msgEl.style.opacity = '0';
+      setTimeout(() => {
+        msgEl.textContent = msg;
+        msgEl.style.opacity = '1';
+      }, 300);
+    }
+
+    function mostrarImagenesSecuencialmente(imagenesArray, callback) {
+      const canvas = document.getElementById('cakeCanvas');
+      let indice = 0;
+
+      function mostrarSiguiente() {
+        if (indice < imagenesArray.length) {
+          const img = document.createElement('img');
+          img.src = imagenesArray[indice];
+          img.className = 'cake-image';
+          canvas.innerHTML = '';
+          canvas.appendChild(img);
+          
+          indice++;
+          setTimeout(mostrarSiguiente, 1500); // Cada imagen se muestra 1.5 segundos
+        } else {
+          if (callback) callback();
+        }
+      }
+
+      mostrarSiguiente();
+    }
+
+    function mostrarImagenFinal(ruta) {
+      const canvas = document.getElementById('cakeCanvas');
+      const img = document.createElement('img');
+      img.src = ruta;
+      img.className = 'cake-image';
+      canvas.innerHTML = '';
+      canvas.appendChild(img);
+    }
+
+    function agregarIngrediente() {
+      if (estado.ingredientes) return;
+      estado.ingredientes = true;
+
+      const audio = document.getElementById('musica');
+      audio.play().catch(err => console.log('No se pudo reproducir:', err));
+
+      updateStatusMessage('🧂 Preparando ingredientes...');
+      document.getElementById('btnIngredientes').disabled = true;
+
+      mostrarImagenesSecuencialmente(imagenes.ingredientes, () => {
+        updateProgress();
+        updateStatusMessage('✅ Ingredientes listos - Ahora mezcla');
+        document.getElementById('btnMezclar').disabled = false;
+        document.getElementById('infoBox').textContent = '¡Ingredientes agregados! Mezcla ahora.';
+      });
+    }
+
+    function mezclar() {
+      if (!estado.ingredientes || estado.mezclado) return;
+      estado.mezclado = true;
+
+      updateStatusMessage('🔄 Mezclando deliciosamente...');
+      document.getElementById('btnMezclar').disabled = true;
+
+      mostrarImagenesSecuencialmente(imagenes.mezclar, () => {
+        updateProgress();
+        updateStatusMessage('✅ Mezcla lista - Ahora hornea');
+        document.getElementById('btnHornear').disabled = false;
+        document.getElementById('infoBox').textContent = '¡Mezcla completa! A hornear.';
+      });
+    }
+
+    function hornear() {
+      if (!estado.mezclado || estado.horneado) return;
+      estado.horneado = true;
+
+      updateStatusMessage('🔥 Horneando con amor...');
+      document.getElementById('btnHornear').disabled = true;
+
+      mostrarImagenesSecuencialmente(imagenes.hornear, () => {
+        updateProgress();
+        updateStatusMessage('✅ Pastel horneado - Ahora decora');
+        document.getElementById('btnDecorar').disabled = false;
+        document.getElementById('infoBox').textContent = '¡Pastel listo! Decóralo ahora.';
+      });
+    }
+
+    function decorar() {
+      if (!estado.horneado || estado.decorado) return;
+      estado.decorado = true;
+
+      updateStatusMessage('✨ Decorando con brillantez...');
+      document.getElementById('btnDecorar').disabled = true;
+
+      mostrarImagenesSecuencialmente(imagenes.decorar, () => {
+        updateProgress();
+        
+        // Mostrar imagen final después de un pequeño delay
+        setTimeout(() => {
+          mostrarImagenFinal(imagenes.final);
+          mostrarMensajeFinal();
+          crearConfetti();
+        }, 500);
+      });
+    }
+
+    function mostrarMensajeFinal() {
+      const finalMsg = document.getElementById('finalMessage');
+      finalMsg.classList.add('show');
+    }
+
+    function crearConfetti() {
+      const emojis = ['🍓', '✨', '🌈', '💎', '🎀', '🎉'];
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.fontSize = (Math.random() * 20 + 20) + 'px';
+        confetti.style.animation = `fall ${Math.random() * 2 + 3}s linear`;
+        document.body.appendChild(confetti);
+
+        setTimeout(() => confetti.remove(), 5000);
+      }
+    }
+
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fall {
+        0% {
+          opacity: 1;
+          transform: translateY(0) rotate(0deg);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(600px) rotate(360deg);
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>
