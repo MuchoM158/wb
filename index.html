@@ -376,7 +376,7 @@
 
       mostrarImagenesSecuencialmente(imagenes.ingredientes, () => {
         updateProgress();
-        updateStatusMessage('✅ Ingredientes listos - Ahora mezcla');
+        updateStatusMessage('✅ Ingredientes listos');
         document.getElementById('btnMezclar').disabled = false;
         document.getElementById('infoBox').textContent = '¡Ingredientes agregados! Mezcla ahora.';
       });
@@ -391,7 +391,7 @@
 
       mostrarImagenesSecuencialmente(imagenes.mezclar, () => {
         updateProgress();
-        updateStatusMessage('✅ Mezcla lista - Ahora hornea');
+        updateStatusMessage('✅ Mezcla lista');
         document.getElementById('btnHornear').disabled = false;
         document.getElementById('infoBox').textContent = '¡Mezcla completa! A hornear.';
       });
@@ -406,7 +406,7 @@
 
       mostrarImagenesSecuencialmente(imagenes.hornear, () => {
         updateProgress();
-        updateStatusMessage('✅ Pastel horneado - Ahora decora');
+        updateStatusMessage('✅ Pastel horneado');
         document.getElementById('btnDecorar').disabled = false;
         document.getElementById('infoBox').textContent = '¡Pastel listo! Decóralo ahora.';
       });
@@ -416,7 +416,7 @@
       if (!estado.horneado || estado.decorado) return;
       estado.decorado = true;
 
-      updateStatusMessage('✨ Decorando con brillantez...');
+      updateStatusMessage('✨ Decorando delicadamente...');
       document.getElementById('btnDecorar').disabled = true;
 
       mostrarImagenesSecuencialmente(imagenes.decorar, () => {
@@ -437,7 +437,7 @@
     }
 
     function crearConfetti() {
-      const emojis = ['🍓', '✨', '🌈', '💎', '🎀', '🎉'];
+      const emojis = ['🎉', '🎀', '✨', '🎉', '🎀', '✨'];
       for (let i = 0; i < 50; i++) {
         const confetti = document.createElement('div');
         confetti.className = 'confetti';
@@ -468,3 +468,4 @@
   </script>
 </body>
 </html>
+
